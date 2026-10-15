@@ -112,6 +112,8 @@ export default function PrayerDashboard() {
   const [tick, setTick] = useState(0);
 
   const notifiedPrayers = useRef(new Set<string>());
+  const prayerDetectorInitialized = useRef(false);
+
   // Pantau koneksi internet dan detak countdown.
   useEffect(() => {
     const updateOnline = () => setOnline(navigator.onLine);
@@ -295,12 +297,36 @@ export default function PrayerDashboard() {
       { name: "Isya", time: times.isya },
     ];
 
+    // Inisialisasi pertama:
+    // tandai waktu sholat yang sudah lewat agar tidak memicu toast
+    // setelah halaman dibuka atau di-refresh.
+    if (!prayerDetectorInitialized.current) {
+      for (const prayer of prayers) {
+        const [hour, minute] = prayer.time.split(":").map(Number);
+        const prayerSeconds = hour * 3600 + minute * 60;
+        const key = `${selectedCity}-${date}-${prayer.name}`;
+
+        if (nowSeconds >= prayerSeconds) {
+          notifiedPrayers.current.add(key);
+        }
+      }
+
+      prayerDetectorInitialized.current = true;
+      return;
+    }
+
+    // Setelah inisialisasi, deteksi waktu sholat yang baru tiba.
     for (const prayer of prayers) {
       const [hour, minute] = prayer.time.split(":").map(Number);
       const prayerSeconds = hour * 3600 + minute * 60;
       const key = `${selectedCity}-${date}-${prayer.name}`;
 
-      if (nowSeconds >= prayerSeconds && !notifiedPrayers.current.has(key)) {
+      // Hanya memicu dalam detik pertama waktu sholat.
+      if (
+        nowSeconds >= prayerSeconds &&
+        nowSeconds < prayerSeconds + 1 &&
+        !notifiedPrayers.current.has(key)
+      ) {
         notifiedPrayers.current.add(key);
         setToastPrayer(prayer.name);
         break;

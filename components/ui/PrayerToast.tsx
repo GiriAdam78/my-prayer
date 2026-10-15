@@ -9,7 +9,7 @@ interface PrayerToastProps {
 
 export default function PrayerToast({ prayerName, onClose }: PrayerToastProps) {
   useEffect(() => {
-    const timeout = window.setTimeout(onClose, 1000);
+    const timeout = window.setTimeout(onClose, 4000);
 
     return () => window.clearTimeout(timeout);
   }, [onClose]);
@@ -18,14 +18,27 @@ export default function PrayerToast({ prayerName, onClose }: PrayerToastProps) {
     <div
       role="status"
       aria-live="polite"
-      className="fixed right-4 top-4 z-[100] w-[calc(100%-2rem)] max-w-sm animate-in slide-in-from-top-2 duration-200 rounded-xl border border-emerald-200 bg-white p-4 shadow-xl"
+      className="
+        fixed right-3 top-3 z-[100]
+        w-[calc(100%-1.5rem)] max-w-[300px]
+        animate-in slide-in-from-top-2 fade-in
+        duration-200
+        rounded-lg border border-emerald-200
+        bg-white p-3 shadow-lg
+      "
     >
-      <div className="flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
+      <div className="flex items-start gap-2.5">
+        <div
+          className="
+            flex h-8 w-8 shrink-0 items-center
+            justify-center rounded-full
+            bg-emerald-100 text-emerald-700
+          "
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="22"
-            height="22"
+            width="18"
+            height="18"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -39,11 +52,12 @@ export default function PrayerToast({ prayerName, onClose }: PrayerToastProps) {
         </div>
 
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-gray-900">
+          <p className="text-sm font-semibold leading-snug text-gray-900">
             Waktu sholat {prayerName} telah tiba
           </p>
-          <p className="mt-1 text-sm leading-relaxed text-gray-600">
-            Silakan mengambil air wudhu untuk melaksanakan sholat.
+
+          <p className="mt-1 text-xs leading-relaxed text-gray-600">
+            Saatnya mengambil air wudhu dan melaksanakan sholat.
           </p>
         </div>
 
@@ -51,16 +65,21 @@ export default function PrayerToast({ prayerName, onClose }: PrayerToastProps) {
           type="button"
           onClick={onClose}
           aria-label="Tutup notifikasi"
-          className="rounded-md p-1 text-gray-400 transition hover:bg-gray-100 hover:text-gray-700"
+          className="
+            shrink-0 rounded p-1 text-gray-400
+            transition hover:bg-gray-100 hover:text-gray-700
+          "
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
+            width="15"
+            height="15"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
             <path d="m18 6-12 12M6 6l12 12" />
           </svg>
