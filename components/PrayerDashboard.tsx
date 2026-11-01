@@ -100,7 +100,10 @@ function formatCountdown(totalSeconds: number) {
 }
 
 export default function PrayerDashboard() {
-  const [toastPrayer, setToastPrayer] = useState("");
+  const [toastPrayer, setToastPrayer] = useState<{
+    prayerName: string;
+    type: "reminder" | "arrival";
+  } | null>(null);
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState("");
   const [times, setTimes] = useState<PrayerTimes | null>(null);
@@ -320,15 +323,35 @@ export default function PrayerDashboard() {
       const [hour, minute] = prayer.time.split(":").map(Number);
       const prayerSeconds = hour * 3600 + minute * 60;
       const key = `${selectedCity}-${date}-${prayer.name}`;
+      const remaining = prayerSeconds - nowSeconds;
 
+      const reminderKey = `prayer-reminder-${selectedCity}-${date}-${prayer.name}`;
+
+      const arrivalKey = `prayer-arrival-${selectedCity}-${date}-${prayer.name}`;
       // Hanya memicu dalam detik pertama waktu sholat.
       if (
-        nowSeconds >= prayerSeconds &&
-        nowSeconds < prayerSeconds + 1 &&
-        !notifiedPrayers.current.has(key)
+        remaining > 0 &&
+        remaining <= 600 &&
+        !localStorage.getItem(reminderKey)
       ) {
-        notifiedPrayers.current.add(key);
-        setToastPrayer(prayer.name);
+        localStorage.setItem(reminderKey, "true");
+        setToastPrayer({ prayerName: prayer.name, type: "reminder" });
+
+        break;
+      }
+
+      if (
+        remaining <= 0 &&
+        remaining > -1 &&
+        !localStorage.getItem(arrivalKey)
+      ) {
+        localStorage.setItem(arrivalKey, "true");
+
+        setToastPrayer({
+          prayerName: prayer.name,
+          type: "arrival",
+        });
+
         break;
       }
     }
@@ -404,8 +427,9 @@ export default function PrayerDashboard() {
       {/* Jadwal dan pemilih kota */}
       {toastPrayer && (
         <PrayerToast
-          prayerName={toastPrayer}
-          onClose={() => setToastPrayer("")}
+          prayerName={toastPrayer.prayerName}
+          type={toastPrayer.type}
+          onClose={() => setToastPrayer(null)}
         />
       )}
     </>

@@ -10,6 +10,22 @@ interface IslamicEventCountdownProps {
   countdown: string;
 }
 
+function formatMinutes(countdown: string) {
+  const [hours, minutes, seconds] = countdown.split(":").map(Number);
+
+  if (hours > 0) {
+    return {value: hours, unit: "JAM LAGI"};
+  }
+
+  if (minutes > 0) {
+    return {value: minutes, unit: "MENIT LAGI"};
+  }
+
+  if (seconds > 0) {
+    return {value: seconds, unit: "DETIK LAGI"};
+  }
+  return {value: 0, unit: "WAKTU SHOLAT TIBA"};
+}
 export default function IslamicEventCountdown({
   nextPrayerName,
   nextPrayerTime,
@@ -108,12 +124,12 @@ export default function IslamicEventCountdown({
               </div>
 
               <div className="shrink-0 rounded-lg bg-white px-4 py-2 text-center shadow-sm">
-                <p className="text-lg font-black tabular-nums text-slate-900">
-                  {countdown}
+                <p className="text-xl font-black tabular-nums text-emerald-700 sm:text-1xl">
+                  {formatMinutes(countdown).value}
                 </p>
 
                 <p className="mt-1 text-[9px] font-bold uppercase tracking-wide text-slate-500">
-                  Waktu tersisa
+                  {formatMinutes(countdown).unit}
                 </p>
               </div>
             </>

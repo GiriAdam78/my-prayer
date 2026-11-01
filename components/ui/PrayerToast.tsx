@@ -4,10 +4,11 @@ import { useEffect } from "react";
 
 interface PrayerToastProps {
   prayerName: string;
+  type: "reminder" | "arrival";
   onClose: () => void;
 }
 
-export default function PrayerToast({ prayerName, onClose }: PrayerToastProps) {
+export default function PrayerToast({ prayerName, type , onClose }: PrayerToastProps) {
   useEffect(() => {
     const timeout = window.setTimeout(onClose, 4000);
 
@@ -53,11 +54,15 @@ export default function PrayerToast({ prayerName, onClose }: PrayerToastProps) {
 
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold leading-snug text-gray-900">
-            Waktu sholat {prayerName} telah tiba
+            {type === "reminder"
+              ? `10 menit lagi menuju waktu sholat ${prayerName}`
+              : `Waktu sholat ${prayerName} telah tiba`}
           </p>
 
           <p className="mt-1 text-xs leading-relaxed text-gray-600">
-            Saatnya mengambil air wudhu dan melaksanakan sholat.
+            {type === "reminder"
+              ? "Persiapkan diri dan bersiaplah untuk mengambil air wudhu."
+              : "Saatnya mengambil air wudhu dan melaksanakan sholat."}
           </p>
         </div>
 
